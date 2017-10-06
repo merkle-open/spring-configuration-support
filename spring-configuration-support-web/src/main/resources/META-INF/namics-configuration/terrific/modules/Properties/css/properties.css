@@ -1,0 +1,14 @@
+@media screen {
+
+	/*.mod-overview tbody {*/
+	/*font-size: 12px;*/
+	/*}*/
+	.mod-properties .modal-body td {
+		font-size: small;
+	}
+
+	/*.mod-overview tbody tr:hover {*/
+	/*background-color: #ddd;*/
+	/*}*/
+
+}
