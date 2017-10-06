@@ -10,7 +10,7 @@ env:
     - # ^^ GPG_PASSPHRASE
     - secure: "D0cN2+Czu7g957b6e7JDuDpxLxVkYQRDTGDpA+0q5GJDc1LaRsA1qUJiunIDwCsv9jwkpOJULh5SAIjUEJBBXBD22+UGEaG3yjeU8mmigoi+tBwXy5rIbsOMOFmGWu9xlpF3LKj6J5cX44A/d489Y5LWYZ7gJzEZXsf1OuUYWEXztCR7FU+SiTSie6LyAzgHM3FF7bRHOgvm/T2/gtj5HhfTbAQB4u0kvoJzUDWf0i/44oCkVW1j6rD7yNITrdVV4MdSQecit3sNr2w+kMQTd1y/YiBTYayes+i5m4YRTICNvQ/WlG81uOK7zrkLK9qKYZrscCd/m9ov4+IivPjM9zHQVYfcOqmdDGN2I4mlVTuQF3M7kLLRMhE2iHJ2utOxauGmkoV2SrVEXyXdCPSXpk9gmuHG6vPYzfmwhFZFKmrykzuMMXtwyqyWjTi9FJjRBSIlGtaG+zZc30IxY1hlSwvHZu68eeMlhBeuODyVi9E9mHMmeopA4mfa+9QeKiwiK0B76PDNYysmNgbKvLfsh1mVLoNEg8nUZjr06F08xji7QWlayKs1ZJ5cEJiue2e0qaP+H11YnNkJ+5dZUlYGC79go+AXEpkk5mr3hRMAzLl/z5phX2BBi+KJ1g1i7q4RiTFfTdvx14r0Hyc2qZBQPEOKpv37yPWbRi8+ekoFv8k="
 before_install:
-  - openssl aes-256-cbc -K $encrypted_d7c398f2387b_key -iv $encrypted_d7c398f2387b_iv -in codesigning.asc.enc -out codesigning.asc -d
+  - openssl aes-256-cbc -K $encrypted_1d105c7e75dd_key -iv $encrypted_1d105c7e75dd_iv -in codesigning.asc.enc -out codesigning.asc -d
   - gpg --yes --batch --import codesigning.asc
 jdk:
   - oraclejdk8
