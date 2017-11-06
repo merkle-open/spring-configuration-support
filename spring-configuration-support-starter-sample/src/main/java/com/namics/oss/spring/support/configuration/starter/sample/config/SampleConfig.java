@@ -23,12 +23,6 @@ import javax.sql.DataSource;
 public class SampleConfig {
 
 	@Bean
-	@DependsOn("databaseConfigurationSource")
-	public static PropertySourcesPlaceholderConfigurer databaseConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
-
-	@Bean
 	public DataSource dataSource(){
 		return new EmbeddedDatabaseBuilder()
 				.setType(EmbeddedDatabaseType.H2)

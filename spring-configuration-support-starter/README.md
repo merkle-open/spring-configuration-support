@@ -62,3 +62,8 @@ Note the DependsOn-annotation, which makes sure that we include the properties f
 	public static PropertySourcesPlaceholderConfigurer databaseConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
+
+
+## Step 3: Encryption with jasypt
+
+todo lboesch
