@@ -8,11 +8,7 @@ import com.namics.oss.spring.support.configuration.model.ConfigurationValue;
 import com.namics.oss.spring.support.configuration.service.ConfigurationValueService;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +34,7 @@ public class ConfigRestController {
 	public ConfigRestController(ConfigurationValueService service, Environment environment) {
 		this.service = service;
 		String regex = "(.*password.*)|(.*secret.*)";
-		regex = environment.getProperty("namics.commons.config.web.hide.pattern", regex);
+		regex = environment.getProperty("namics.commons.config.web.hide.pattern", regex); //fixme possibility to configure with spring starter props.
 		this.hidePattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 	}
 
