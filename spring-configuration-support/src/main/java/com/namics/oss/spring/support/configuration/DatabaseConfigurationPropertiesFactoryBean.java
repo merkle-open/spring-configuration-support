@@ -265,18 +265,19 @@ public class DatabaseConfigurationPropertiesFactoryBean implements FactoryBean<O
 		return environments.toArray(new String[environments.size()]);
 	}
 
-	public void setEnvironments(String[] environments) {
+	public void setEnvironments(String... environments) {
 		this.environments = stream(environments).collect(Collectors.toSet());
 	}
-
+	
 	/**
 	 * set the environments to fetch properties for.
 	 *
 	 * @param environments to set
 	 * @return this for fluent config
 	 */
-	public DatabaseConfigurationPropertiesFactoryBean environments(String[] environments) {
+	public DatabaseConfigurationPropertiesFactoryBean environments(String... environments) {
 		setEnvironments(environments);
 		return this;
 	}
+
 }
