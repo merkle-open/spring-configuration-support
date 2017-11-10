@@ -66,4 +66,12 @@ Note the DependsOn-annotation, which makes sure that we include the properties f
 
 ## Step 3: Encryption with jasypt
 
-todo lboesch
+If you like to encrypt your database properties, you could use jasypt. There is a spring boot starter available to use jasypt:
+
+		<dependency>
+			<groupId>com.github.ulisesbocchio</groupId>
+			<artifactId>jasypt-spring-boot-starter</artifactId>
+			<version>???</version>
+		</dependency>
+
+Provide a Bean of org.jasypt.encryption.StringEncryptor.class and save your properties with `ENC()` to the database. Those properties gets decrypted automatically.
