@@ -41,6 +41,16 @@ The starter supports the configuration of the these default settings within the 
     com.namics.oss.spring.support.configuration.dataSource.valueColumnName=configuration_value
     com.namics.oss.spring.support.configuration.dataSource.environmentColumnName=configuration_env
     com.namics.oss.spring.support.configuration.dataSource.defaultEnvironment=DEV
+    
+You have to create the table yourself. With the following SQL Script, you create the default table used for properties:
+
+	-- create table schema
+	CREATE TABLE nmx_configuration (
+    	configuration_env VARCHAR(32) NOT NULL,
+    	configuration_key VARCHAR(250) NOT NULL,
+    	configuration_value VARCHAR(250) NULL,
+    	PRIMARY KEY (configuration_env, configuration_key)
+    );
 
 ### Configuration of the Environment
 Depending on your active profiles, multiple PropertySources are added to your environment. Differentiation between environments is managed via Spring profiles.
