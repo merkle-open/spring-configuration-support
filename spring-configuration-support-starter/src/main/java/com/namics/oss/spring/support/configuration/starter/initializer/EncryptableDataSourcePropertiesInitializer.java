@@ -4,7 +4,6 @@ import com.namics.oss.spring.support.configuration.DaoConfigurationPropertiesFac
 import com.ulisesbocchio.jasyptspringboot.resolver.DefaultPropertyResolver;
 import com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper;
 import org.jasypt.encryption.StringEncryptor;
-import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
 import java.util.Map;
@@ -28,6 +27,7 @@ public class EncryptableDataSourcePropertiesInitializer extends DataSourceProper
 	@Override
 	protected PropertySource<Map<String, Object>> getPropertySource(PropertySource<Map<String, Object>> propertiesPropertySource) {
 		if (stringEncryptor != null) {
+			//fixme use EncryptablePropertyResolver as bean directly instead of StringEncryptor
 			return new EncryptablePropertySourceWrapper<>(propertiesPropertySource, new DefaultPropertyResolver(stringEncryptor));
 		}
 		return propertiesPropertySource;

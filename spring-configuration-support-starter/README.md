@@ -61,18 +61,19 @@ The starter allows you to override the default settings for servlet-name and ser
     # Optional properties for configuration-web
     com.namics.oss.spring.support.configuration.web.servletName=configurationServlet
     com.namics.oss.spring.support.configuration.web.servletMapping=/configuration/*
+    
+You could only administrate the properties for one environment over the configuration servlet. It's possible to set the profile, for which the properties are editable over the administration interface, with the following property:
+	
+	#Optional property for configruation admin service
+	com.namics.oss.spring.support.configuration.defaultProfile=DEFAULT
 
-### Resolve configured values
+You could also define your own Bean of type `ConfigurationEnvironment` to define the environment.
 
-Configure a PropertySourcesPlaceholderConfigurer, if you want to resolve @Value annotations based on the current Spring Environment and its set of PropertySources.
-Note the DependsOn-annotation, which makes sure that we include the properties fetched from the DataSource.
-
-    @Bean
-	@DependsOn("databaseConfigurationSource")
-	public static PropertySourcesPlaceholderConfigurer databaseConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
+	@Bean
+	public ConfigurationEnvironment configurationEnvironmentDefault() {
+		return new ConfigurationEnvironment("YOUR-PROFILE-TO-ADMINISTRATE");
 	}
-
+	
 
 ## Step 3: Encryption with jasypt
 

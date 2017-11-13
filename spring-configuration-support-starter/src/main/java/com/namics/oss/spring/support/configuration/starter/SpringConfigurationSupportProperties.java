@@ -15,6 +15,7 @@ public class SpringConfigurationSupportProperties {
 
 	private DataSource dataSource = new DataSource();
 	private Web web = new Web();
+	private String defaultProfile = "DEFAULT";
 
 	public DataSource getDataSource() {
 		return dataSource;
@@ -30,6 +31,14 @@ public class SpringConfigurationSupportProperties {
 
 	public void setWeb(Web web) {
 		this.web = web;
+	}
+
+	public String getDefaultProfile() {
+		return defaultProfile;
+	}
+
+	public void setDefaultProfile(String defaultProfile) {
+		this.defaultProfile = defaultProfile;
 	}
 
 
