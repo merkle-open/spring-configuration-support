@@ -8,7 +8,6 @@ import com.namics.oss.spring.support.configuration.starter.initializer.Encryptab
 import org.jasypt.encryption.StringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -72,7 +71,6 @@ public class SpringConfigurationSupportAutoConfiguration implements EnvironmentA
 
 	@Configuration
 	@ConditionalOnClass(name = { "org.jasypt.encryption.StringEncryptor", "com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper" })
-	@ConditionalOnBean(StringEncryptor.class)
 	public static class EncryptableConfiguration {
 		@Bean(name = "dataSourcePropertiesInitializer")
 		public EncryptableDataSourcePropertiesInitializer encryptableDataSourcePropertiesInitializer(@Named("databaseConfiguration") DaoConfigurationPropertiesFactoryBean databaseConfigFactory, @Autowired(required = false) StringEncryptor stringEncryptor) {
