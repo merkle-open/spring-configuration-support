@@ -33,7 +33,7 @@ import static com.namics.oss.spring.support.configuration.starter.SpringConfigur
  * @since 02.08.2017 09:24
  */
 @Configuration
-//@ConditionalOnBean({ DataSource.class })
+//fixme add condition @ConditionalOnBean({ DataSource.class })
 @ConditionalOnClass({ ConfigurationDaoJdbcImpl.class })
 @EnableConfigurationProperties(SpringConfigurationSupportProperties.class)
 @AutoConfigureAfter({ DataSourceAutoConfiguration.class })
