@@ -1,0 +1,77 @@
+<div class="mod mod-properties" data-url="value">
+	<script id="tpl_props" class="tpl-props" type="text/x-dot-template">
+		<div class="table-responsive">
+			<table class="table table-hover table-condensed">
+				<thead>
+				<tr>
+					<th>Action</th>
+					<th>Property</th>
+					<th>Value</th>
+					<th>Environment</th>
+				</tr>
+				</thead>
+				<tbody>
+				{{~it :prop:index}}
+				<tr>
+					<td>
+						<button class="btn btn-default btn-xs"
+								data-property="{{= prop.key}}"
+								data-value="{{= prop.value}}"
+								data-env="{{= prop.env}}"
+								data-secret="{{= prop.secret}}"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
+						<button aria-hidden="true"
+								class="btn btn-default btn-xs"
+								data-delete="{{= prop.key}}"
+								data-env="{{= prop.env}}"><i class="glyphicon glyphicon-remove"></i> Delete</button>
+					</td>
+					<td><code>{{= prop.key}}</code></td>
+					<td>{{= prop.value}}</td>
+					<td>{{= prop.env}}</td>
+				</tr>
+				{{~}}
+				</tbody>
+			</table>
+		</div>
+	</script>
+	<div class="props"></div>
+	<div class="js-insert" aria-hidden="true">
+		<button class="btn btn-default"><i class="glyphicon glyphicon-plus"></i> New Value</button>
+	</div>
+
+	<div class="modal bs-modal-edit" tabindex="-1" role="dialog" aria-labelledby="Edit" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+								class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">Edit Property</h4>
+					</div>
+					<div class="modal-body">
+
+						<div id="save-error" class="alert alert-danger alert-dismissible" aria-hidden="true" role="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+							</button>
+							<strong>Error:</strong> New value could not be saved.
+						</div>
+						<div class="form-group">
+							<label for="key">Property</label>
+							<input type="text" name="key" class="form-control" id="key" readonly="readonly"/>
+						</div>
+						<div class="form-group">
+							<label for="value">Value</label>
+							<input type="text" class="form-control" name="value" id="value" autocomplete="off" autofocus="autofocus"/>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-primary">Save</button>
+
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
