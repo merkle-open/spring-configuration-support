@@ -24,10 +24,7 @@ import static java.util.Arrays.asList;
 @Controller
 public class TestController {
 
-	@Inject
-	protected ConfigurationDao configurationDao;
-	@Inject
-	protected ConfigurationValueService configurationValueService;
+	private ConfigurationValueService configurationValueService;
 
 	@Value("${test.property.profile.default:wrong}")
 	protected String property1;
@@ -37,16 +34,18 @@ public class TestController {
 	protected String property3;
 	@Value("${test.property.profile.dev.db:wrong}")
 	protected String property4;
+	@Value("${test.encrypted.file.property:wrong}")
+	protected String decryptedProperty;
 
 	@Inject
-	public TestController(){
-
+	public TestController(ConfigurationValueService configurationValueService, ConfigurationDao configurationDao){
+		this.configurationValueService = configurationValueService;
 	}
 
 	@RequestMapping("/properties")
 	@ResponseBody
 	public Collection<String> resolvedProperties(){
-		return asList(property1,property2,property3,property4);
+		return asList(property1,property2,property3,property4,decryptedProperty);
 	}
 
 	@RequestMapping("/db")
@@ -62,6 +61,7 @@ public class TestController {
 		Map<String,String> mappings = new LinkedHashMap<>();
 		mappings.put("test.property.profile.default",property1);
 		mappings.put("test.property.profile.dev",property2);
+		mappings.put("test.encrypted.file.property",decryptedProperty);
 		return mappings;
 	}
 
