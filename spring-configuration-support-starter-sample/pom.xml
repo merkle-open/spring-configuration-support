@@ -9,6 +9,7 @@
 	</parent>
 
 	<artifactId>spring-configuration-support-starter-sample</artifactId>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
