@@ -36,6 +36,8 @@ public class TestController {
 	protected String property4;
 	@Value("${test.encrypted.file.property:wrong}")
 	protected String decryptedProperty;
+	@Value("${test.encrypted.db.property:wrong}")
+	protected String decryptedDbProperty;
 
 	@Inject
 	public TestController(ConfigurationValueService configurationValueService, ConfigurationDao configurationDao){
@@ -45,7 +47,7 @@ public class TestController {
 	@RequestMapping("/properties")
 	@ResponseBody
 	public Collection<String> resolvedProperties(){
-		return asList(property1,property2,property3,property4,decryptedProperty);
+		return asList(property1,property2,property3,property4,"File-Property:" + decryptedProperty, "Db-Property:" + decryptedDbProperty);
 	}
 
 	@RequestMapping("/db")

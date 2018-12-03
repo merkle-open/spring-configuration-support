@@ -7,13 +7,13 @@ import com.namics.oss.spring.support.configuration.starter.initializer.DataSourc
 import com.namics.oss.spring.support.configuration.starter.initializer.EncryptableDataSourcePropertiesInitializer;
 import com.ulisesbocchio.jasyptspringboot.EncryptablePropertyFilter;
 import com.ulisesbocchio.jasyptspringboot.EncryptablePropertyResolver;
+import com.ulisesbocchio.jasyptspringboot.JasyptSpringBootAutoConfiguration;
 import com.ulisesbocchio.jasyptspringboot.filter.DefaultPropertyFilter;
 import com.ulisesbocchio.jasyptspringboot.resolver.DefaultPropertyResolver;
 import org.jasypt.encryption.StringEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -27,6 +27,7 @@ import org.springframework.core.env.Environment;
 
 import javax.inject.Named;
 import javax.sql.DataSource;
+import java.util.Optional;
 
 import static com.namics.oss.spring.support.configuration.starter.SpringConfigurationSupportProperties.DataSource.NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX;
 import static com.namics.oss.spring.support.configuration.starter.SpringConfigurationSupportProperties.NAMICS_CONFIGURATION_PROPERTIES_PREFIX;
@@ -39,121 +40,116 @@ import static com.namics.oss.spring.support.configuration.starter.SpringConfigur
  */
 @Configuration
 //fixme add condition @ConditionalOnBean({ DataSource.class })
-@ConditionalOnClass({ ConfigurationDaoJdbcImpl.class })
+@ConditionalOnClass({ConfigurationDaoJdbcImpl.class})
 @EnableConfigurationProperties(SpringConfigurationSupportProperties.class)
-@AutoConfigureAfter({ DataSourceAutoConfiguration.class })
+@AutoConfigureAfter(value = {DataSourceAutoConfiguration.class, JasyptSpringBootAutoConfiguration.class})
 public class SpringConfigurationSupportAutoConfiguration implements EnvironmentAware {
 
-	private static Logger LOG = LoggerFactory.getLogger(SpringConfigurationSupportAutoConfiguration.class);
+    private static Logger LOG = LoggerFactory.getLogger(SpringConfigurationSupportAutoConfiguration.class);
 
-	private static final String PROPERTY_TABLE_NAME = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "tableName";
-	private static final String PROPERTY_COLUMN_KEY = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "keyColumnName";
-	private static final String PROPERTY_COLUMN_VALUE = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "valueColumnName";
-	private static final String PROPERTY_COLUMN_ENVIRONMENT = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "environmentColumnName";
-	private static final String PROPERTY_DEFAULT_ENVIRONMENT = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "defaultEnvironment";
+    private static final String PROPERTY_TABLE_NAME = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "tableName";
+    private static final String PROPERTY_COLUMN_KEY = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "keyColumnName";
+    private static final String PROPERTY_COLUMN_VALUE = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "valueColumnName";
+    private static final String PROPERTY_COLUMN_ENVIRONMENT = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "environmentColumnName";
+    private static final String PROPERTY_DEFAULT_ENVIRONMENT = NAMICS_CONFIGURATION_PROPERTIES_PREFIX + "." + NAMICS_CONFIGURATION_DATA_SOURCE_PROPERTIES_PREFIX + "." + "defaultEnvironment";
 
-	protected org.springframework.core.env.Environment environment;
+    protected org.springframework.core.env.Environment environment;
 
-	@Override
-	public void setEnvironment(final org.springframework.core.env.Environment environment) {
-		this.environment = environment;
-	}
+    @Override
+    public void setEnvironment(final org.springframework.core.env.Environment environment) {
+        this.environment = environment;
+    }
 
-	@Configuration
-	protected static class DataSourcePropertiesInitializerInitializerJpaDependencyConfiguration extends EntityManagerFactoryDependsOnPostProcessor {
-		public DataSourcePropertiesInitializerInitializerJpaDependencyConfiguration() {
-			super("dataSourcePropertiesInitializer");
-		}
-	}
+    @Configuration
+    protected static class DataSourcePropertiesInitializerInitializerJpaDependencyConfiguration extends EntityManagerFactoryDependsOnPostProcessor {
+        public DataSourcePropertiesInitializerInitializerJpaDependencyConfiguration() {
+            super("dataSourcePropertiesInitializer");
+        }
+    }
 
-	// Jasypt classes are present and String-Encryptor initialized (custom or default by Jasypt-Starter)
-	@Configuration
-	@ConditionalOnClass(name = {
-			"org.jasypt.encryption.StringEncryptor",
-			"com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper",
-	})
-	@ConditionalOnBean(value = {StringEncryptor.class})
-	public static class EncryptableConfiguration {
+    // DataSource properties with encryption support if:
+    // - Jasypt classes are present
+    // - At least a {@link org.jasypt.encryption.StringEncryptor} is provided
+    @Configuration
+    @ConditionalOnClass(name = {
+            "org.jasypt.encryption.StringEncryptor",
+            "com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper"
 
-		@Bean(name = "dataSourcePropertiesInitializer")
-		public EncryptableDataSourcePropertiesInitializer encryptableDataSourcePropertiesInitializer(@Named("databaseConfiguration") DaoConfigurationPropertiesFactoryBean databaseConfigFactory, EncryptablePropertyResolver encryptablePropertyResolver, EncryptablePropertyFilter encryptablePropertyFilter) {
-			LOG.debug("Initialize support for DataSource properties with support for encryption");
-			return new EncryptableDataSourcePropertiesInitializer(databaseConfigFactory, encryptablePropertyResolver,encryptablePropertyFilter);
-		}
+    })
+    public static class EncryptableConfiguration {
 
-		@Bean
-		@ConditionalOnMissingBean
-		public EncryptablePropertyFilter defaultPropertyFilter(){
-			return new DefaultPropertyFilter();
-		}
+        @Bean(name = "dataSourcePropertiesInitializer")
+        public DataSourcePropertiesInitializer encryptableDataSourcePropertiesInitializer(@Named("databaseConfiguration") DaoConfigurationPropertiesFactoryBean databaseConfigFactory,
+                                                                                          Optional<StringEncryptor> stringEncryptor,
+                                                                                          Optional<EncryptablePropertyResolver> encryptablePropertyResolver,
+                                                                                          Optional<EncryptablePropertyFilter> encryptablePropertyFilter) {
 
-		@Bean
-		@ConditionalOnMissingBean
-		public EncryptablePropertyResolver defaultPropertyResolver(StringEncryptor stringEncryptor){
-			return new DefaultPropertyResolver(stringEncryptor);
-		}
-	}
+            if (stringEncryptor.isPresent()) {
 
-	// Jasypt classes are present but no String-Encryptor initialized
-	@Configuration
-	@ConditionalOnClass(name = {
-			"org.jasypt.encryption.StringEncryptor",
-			"com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper",
-	})
-	@ConditionalOnMissingBean(value = {StringEncryptor.class})
-	public static class DefaultConfiguration {
+                EncryptablePropertyResolver propertyResolver = encryptablePropertyResolver.isPresent() ? encryptablePropertyResolver.get() : encryptablePropertyResolver(stringEncryptor.get());
+                EncryptablePropertyFilter propertyFilter = encryptablePropertyFilter.isPresent() ? encryptablePropertyFilter.get() : encryptablePropertyFilter();
 
-		@Bean(name = "dataSourcePropertiesInitializer")
-		public DataSourcePropertiesInitializer encryptableDataSourcePropertiesInitializer(@Named("databaseConfiguration") DaoConfigurationPropertiesFactoryBean databaseConfigFactory) {
-			LOG.debug("Initialize support for DataSource properties without support for encryption (no Bean of type org.jasypt.encryption.StringEncryptor found)");
-			return new DataSourcePropertiesInitializer(databaseConfigFactory);
-		}
-	}
+                LOG.debug("Initialize support for encrypted DataSource properties");
+                return new EncryptableDataSourcePropertiesInitializer(databaseConfigFactory, propertyResolver, propertyFilter);
+            }
 
-	// Jasypt classes are not present
-	@Bean(name = "dataSourcePropertiesInitializer")
-	@ConditionalOnMissingClass({
-			"org.jasypt.encryption.StringEncryptor",
-			"com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper",
-	})
-	@ConditionalOnMissingBean
-	public DataSourcePropertiesInitializer dataSourcePropertiesInitializer(@Named("databaseConfiguration") DaoConfigurationPropertiesFactoryBean databaseConfigFactory) {
-		LOG.debug("Initialize support for DataSource properties without support for encryption");
-		return new DataSourcePropertiesInitializer(databaseConfigFactory);
-	}
+            LOG.debug("Initialize default support for DataSource properties");
+            return new DataSourcePropertiesInitializer(databaseConfigFactory);
+        }
 
-	@Bean(name = "databaseConfiguration")
-	public DaoConfigurationPropertiesFactoryBean databaseConfigFactory(ConfigurationDao configurationDao, Environment environment) throws Exception {
-		return new DaoConfigurationPropertiesFactoryBean(configurationDao, environment.getActiveProfiles());
-	}
+        private EncryptablePropertyResolver encryptablePropertyResolver(StringEncryptor stringEncryptor) {
+            return new DefaultPropertyResolver(stringEncryptor);
+        }
 
-	@Bean
-	public ConfigurationDao configurationDao(DataSource dataSource) {
-		return ConfigurationDaoJdbcImpl.forDataSource(dataSource)
-				.tableName(getTableName())
-				.environmentColumn(getEnvironmentColumnName())
-				.propertyKeyColumn(getKeyColumnName())
-				.valueColumn(getValueColumnName())
-				.build();
-	}
+        private EncryptablePropertyFilter encryptablePropertyFilter() {
+            return new DefaultPropertyFilter();
+        }
+    }
 
-	protected String getTableName() {
-		return environment.getProperty(PROPERTY_TABLE_NAME, SpringConfigurationSupportProperties.DataSource.DEFAULT_TABLE_NAME);
-	}
+    // Jasypt classes are not present
+    @Bean(name = "dataSourcePropertiesInitializer")
+    @ConditionalOnMissingClass({
+            "com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper"
 
-	protected String getKeyColumnName() {
-		return environment.getProperty(PROPERTY_COLUMN_KEY, SpringConfigurationSupportProperties.DataSource.DEFAULT_COLUMN_KEY);
-	}
+    })
+    @ConditionalOnMissingBean
+    public DataSourcePropertiesInitializer dataSourcePropertiesInitializer(@Named("databaseConfiguration") DaoConfigurationPropertiesFactoryBean databaseConfigFactory) {
+        LOG.debug("Initialize default support for DataSource properties");
+        return new DataSourcePropertiesInitializer(databaseConfigFactory);
+    }
 
-	protected String getValueColumnName() {
-		return environment.getProperty(PROPERTY_COLUMN_VALUE, SpringConfigurationSupportProperties.DataSource.DEFAULT_COLUMN_VALUE);
-	}
+    @Bean(name = "databaseConfiguration")
+    public DaoConfigurationPropertiesFactoryBean databaseConfigFactory(ConfigurationDao configurationDao, Environment environment) throws Exception {
+        return new DaoConfigurationPropertiesFactoryBean(configurationDao, environment.getActiveProfiles());
+    }
 
-	protected String getEnvironmentColumnName() {
-		return environment.getProperty(PROPERTY_COLUMN_ENVIRONMENT, SpringConfigurationSupportProperties.DataSource.DEFAULT_COLUMN_ENVIRONMENT);
-	}
+    @Bean
+    public ConfigurationDao configurationDao(DataSource dataSource) {
+        return ConfigurationDaoJdbcImpl.forDataSource(dataSource)
+                .tableName(getTableName())
+                .environmentColumn(getEnvironmentColumnName())
+                .propertyKeyColumn(getKeyColumnName())
+                .valueColumn(getValueColumnName())
+                .build();
+    }
 
-	protected String getDefaultEnvironment() {
-		return environment.getProperty(PROPERTY_DEFAULT_ENVIRONMENT, SpringConfigurationSupportProperties.DataSource.DEFAULT_ENVIRONMENT);
-	}
+    protected String getTableName() {
+        return environment.getProperty(PROPERTY_TABLE_NAME, SpringConfigurationSupportProperties.DataSource.DEFAULT_TABLE_NAME);
+    }
+
+    protected String getKeyColumnName() {
+        return environment.getProperty(PROPERTY_COLUMN_KEY, SpringConfigurationSupportProperties.DataSource.DEFAULT_COLUMN_KEY);
+    }
+
+    protected String getValueColumnName() {
+        return environment.getProperty(PROPERTY_COLUMN_VALUE, SpringConfigurationSupportProperties.DataSource.DEFAULT_COLUMN_VALUE);
+    }
+
+    protected String getEnvironmentColumnName() {
+        return environment.getProperty(PROPERTY_COLUMN_ENVIRONMENT, SpringConfigurationSupportProperties.DataSource.DEFAULT_COLUMN_ENVIRONMENT);
+    }
+
+    protected String getDefaultEnvironment() {
+        return environment.getProperty(PROPERTY_DEFAULT_ENVIRONMENT, SpringConfigurationSupportProperties.DataSource.DEFAULT_ENVIRONMENT);
+    }
 }
