@@ -3,15 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.2.RELEASE</version>
+		<groupId>com.namics.oss.spring.support.configuration</groupId>
+		<artifactId>spring-configuration-support-pom</artifactId>
+		<version>1.1.0</version>
 	</parent>
 
-	<groupId>com.namics.oss.spring.support.configuration</groupId>
 	<artifactId>spring-configuration-support-sample</artifactId>
-	<version>1.0.1</version>
-
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -26,7 +23,6 @@
 			<artifactId>spring-configuration-support-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

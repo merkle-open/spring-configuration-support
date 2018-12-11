@@ -1,9 +1,9 @@
 package com.namics.oss.spring.support.configuration.starter.initializer;
 
 import com.namics.oss.spring.support.configuration.DaoConfigurationPropertiesFactoryBean;
-import com.ulisesbocchio.jasyptspringboot.resolver.DefaultPropertyResolver;
+import com.ulisesbocchio.jasyptspringboot.EncryptablePropertyFilter;
+import com.ulisesbocchio.jasyptspringboot.EncryptablePropertyResolver;
 import com.ulisesbocchio.jasyptspringboot.wrapper.EncryptablePropertySourceWrapper;
-import org.jasypt.encryption.StringEncryptor;
 import org.springframework.core.env.PropertySource;
 
 import java.util.Map;
@@ -17,20 +17,18 @@ import java.util.Map;
  */
 public class EncryptableDataSourcePropertiesInitializer extends DataSourcePropertiesInitializer {
 
-	protected StringEncryptor stringEncryptor;
+	EncryptablePropertyResolver encryptablePropertyResolver;
+	EncryptablePropertyFilter encryptablePropertyFilter;
 
-	public EncryptableDataSourcePropertiesInitializer(DaoConfigurationPropertiesFactoryBean databaseConfigFactory, StringEncryptor stringEncryptor) {
+	public EncryptableDataSourcePropertiesInitializer(DaoConfigurationPropertiesFactoryBean databaseConfigFactory, EncryptablePropertyResolver encryptablePropertyResolver, EncryptablePropertyFilter encryptablePropertyFilter) {
 		super(databaseConfigFactory);
-		this.stringEncryptor = stringEncryptor;
+		this.encryptablePropertyResolver = encryptablePropertyResolver;
+		this.encryptablePropertyFilter =  encryptablePropertyFilter;
 	}
 
 	@Override
 	protected PropertySource<Map<String, Object>> getPropertySource(PropertySource<Map<String, Object>> propertiesPropertySource) {
-		if (stringEncryptor != null) {
-			//fixme use EncryptablePropertyResolver as bean directly instead of StringEncryptor
-			return new EncryptablePropertySourceWrapper<>(propertiesPropertySource, new DefaultPropertyResolver(stringEncryptor));
-		}
-		return propertiesPropertySource;
+		return new EncryptablePropertySourceWrapper<>(propertiesPropertySource,encryptablePropertyResolver,encryptablePropertyFilter);
 	}
 
 }
